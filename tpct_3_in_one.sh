@@ -1,16 +1,26 @@
 echo "Toolchain performance comparison test cases"
-MEMCPY_REF=940
-WHETSTONE_REF=680.683
-WHETS_NEON_REF=346.287
+MEMCPY_REF_4_8_1=940
+MEMCPY_MIN=940
+WHETSTONE_REF_4_8_1=680.683
+WHETSTONE_MIN=680.683
+WHETS_NEON_REF_4_8_1=346.287
+WHETS_NEON_MIN=346.287
 
 
 MEMCPY_REF_4_6_2=1020
+MEMCPY_MAX=1020
 WHETSTONE_REF_4_6_2=717.893 
+WHETSTONE_MAX=717.893
 WHETS_NEON_REF_4_6_2=346.287
+WHETS_NEON_MAX=346.287
 
-MEMCPY_REF_4_7_2=1020
-WHETSTONE_REF_4_7_2=717.893  
-WHETS_NEON_REF_4_7_2=346.287
+
+MEMCPY_REF_4_7_2=1010
+MEMCPY_MIDDLE=1010
+WHETSTONE_REF_4_7_2=716.893
+WHETSTONE+MIDDLE=716.893  
+WHETS_NEON_REF_4_7_2=345.287
+WHETS_NEON_MIDDLE=345.287
 
 
 
@@ -55,9 +65,13 @@ test_case_01()
 	echo $MEMCPY_CURRENT
 	rm memcpy.log
 	sleep 1
-	MEMCPY_TMP=$(( $MEMCPY_CURRENT - $MEMCPY_REF ))
+	MEMCPY_TMP=$(( $MEMCPY_CURRENT - $MEMCPY_MIN ))
 	
-	MEMCPY_TMP=${MEMCPY_TMP#-}
+	if [ MEMCPY_TMP -ge 0];then
+	return 0
+	fi 
+	MEMCPY_TMP=${MEMCPY_TMP#-}	############求绝对值##############
+	
 	MEMCPY_THRESHOLD=10                                ##################15 is not good can change by auto#################
 	if [ $MEMCPY_TMP -gt $MEMCPY_THRESHOLD ];then
 	return $RC
@@ -81,7 +95,10 @@ test_case_02()
 	echo "WHETSTONE_CURRENT====================$WHETSTONE_CURRENT"
 	######rm memcpy.log######
 	sleep 1
-    WHETSTONE_TMP=$(echo "scale=3;$WHETSTONE_CURRENT - $WHETSTONE_REF"|bc|cut -c 0-6)
+    WHETSTONE_TMP=$(echo "scale=3;$WHETSTONE_CURRENT - $WHETSTONE_MIN"|bc|cut -c 0-6)
+	if [ $WHETSTONE_TMP -ge 0 ];then
+	return 0
+	fi
     WHETSTONE_TMP=${WHETSTONE_TMP#-}
 	WHETSTONE_THRESHOLD=10                                ##################15 is not good can change by auto#################
     echo "WHETSTONE_TMP====================$WHETSTONE_TMP"	
@@ -108,7 +125,10 @@ test_case_03()
 	sleep 1
 	echo "WHETS_NEON_CURRENT====================$WHETS_NEON_CURRENT"
 	sleep 1
-	WHETS_NEON_TMP=$(echo "scale=3;$WHETS_NEON_CURRENT - $WHETS_NEON_REF"|bc|cut -c 0-6)
+	WHETS_NEON_TMP=$(echo "scale=3;$WHETS_NEON_CURRENT - $WHETS_NEON_MIN"|bc|cut -c 0-6)
+	if [ $WHETS_NEON_TMP -ge 0 ];then
+	return 0
+	fi
     WHETS_NEON_TMP=${WHETSTONE_TMP#-}
 	WHETS_NEON_THRESHOLD=10
 	echo "WHETS_NEON_TMP====================$WHETS_NEON_TMP"	
