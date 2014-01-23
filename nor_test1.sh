@@ -31,7 +31,7 @@
 #3. run nor_testapp of vte test.
 #4. $(flash_eraseall /dev/mtd? ; hexdump /dev/mtd? | grep ffff | wc -l) -eq 1
 #
-
+########################test git diff######################
 mtdnode=
 mtdsize=
 device=
